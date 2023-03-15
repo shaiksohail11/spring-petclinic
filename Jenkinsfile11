@@ -26,7 +26,7 @@ pipeline {
         }
         stage('cp jar file') {
             steps {
-                sh 'mkdir -p /tmp/archive/$JOB_NAME/${BUILD_ID} && cp **/libs/spring-petclinic-3.0.0.jar /tmp/archive/$JOB_NAME/${BUILD_ID}/ &&  aws s3 cp /tmp/archive/$JOB_NAME/${BUILD_ID}/spring-petclinic-3.0.0-SNAPSHOT.jar s3://jayachandra '
+                sh 'mkdir -p /tmp/archive/$JOB_NAME/${BUILD_ID} && cp **/libs/spring-petclinic-3.0.0.jar /tmp/archive/$JOB_NAME/${BUILD_ID}/ &&  aws s3 cp /tmp/archive/$JOB_NAME/${BUILD_ID}/spring-petclinic-3.0.0.jar s3://jayachandra '
             }
         }
         stage('post build') {
