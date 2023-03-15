@@ -1,0 +1,37 @@
+pipeline {
+    agent { label 'node1' }
+    triggers { pollSCM ('* * * * *') }
+    parameters {
+        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean', 'clean install'], description: 'Maven Goal')
+    }
+    stages {
+        stage('vcs') {
+            steps {
+                git url: 'https://github.com/jayainjeti/spring-petclinic.git',
+                    branch: 'develop'
+            }
+        }
+        stage('build') {
+            steps {
+                sh './gradlew  build'
+            }
+        }
+        stage('sonar analysis') {
+            steps {
+                // performing sonarqube analysis with "withSonarQubeENV(<Name of Server configured in Jenkins>)"
+                withSonarQubeEnv('SONAR_CLOUD') {
+                       sh './mvnw clean package sonar:sonar -Dsonar.organization=springpet -Dsonar.projectKey=springpetc'
+                }
+            }
+        }
+        stage('cp jar file') {
+            steps {
+                sh 'mkdir -p /tmp/archive/$JOB_NAME/${BUILD_ID} && cp **/libs/spring-petclinic-3.0.0.jar /tmp/archive/$JOB_NAME/${BUILD_ID}/ &&  aws s3 cp /tmp/archive/$JOB_NAME/${BUILD_ID}/spring-petclinic-3.0.0-SNAPSHOT.jar s3://jayachandra '
+            }
+        }
+        stage('post build') {
+            steps {
+                    junit '**/test-results/test/TEST-*.xml'
+                    archiveArtifacts '**/libs/spring-petclinic-3.0.0.jar'
+                }
+            }

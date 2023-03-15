@@ -2,13 +2,13 @@ pipeline {
     agent { label 'node1' }
     triggers { pollSCM ('* * * * *') }
     parameters {
-        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean'], description: 'Maven Goal')
+        choice(name: 'MAVEN_GOAL', choices: ['package', 'install', 'clean', 'clean install'], description: 'Maven Goal')
     }
     stages {
         stage('vcs') {
             steps {
                 git url: 'https://github.com/jayainjeti/spring-petclinic.git',
-                    branch: 'jfrog'
+                    branch: 'main'
             }
         }
         stage ('Artifactory configuration') {
@@ -38,7 +38,7 @@ pipeline {
         
             steps {
                 rtMavenRun (
-                    tool: 'MAVEN_DEFAULT',
+                    tool: 'maven',
                     pom: 'pom.xml',
                     goals: 'clean install',
                     deployerId: "MAVEN_DEPLOYER"
@@ -48,6 +48,11 @@ pipeline {
                     serverId: "ARTIFACTORY_SERVER"
                 )
                 //sh "mvn ${params.MAVEN_GOAL}"
+            }
+        }
+        stage('build') {
+            steps {
+                sh './gradlew  build'
             }
         }
         stage('sonar analysis') {
