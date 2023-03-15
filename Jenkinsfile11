@@ -35,3 +35,5 @@ pipeline {
                     archiveArtifacts '**/libs/spring-petclinic-3.0.0.jar'
                 }
             }
+    }
+}
