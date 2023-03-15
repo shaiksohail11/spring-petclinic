@@ -1,9 +1,9 @@
 [Unit]
 Description=Springpetclinic service
 [Service]
-User=ubuntu
-WorkingDirectory=/home/ubuntu
-ExecStart=/usr/bin/java -jar spring-petclinic-3.0.0-SNAPSHOT.jar
+User=jayachandra
+WorkingDirectory=/home/jayachandra
+ExecStart=/usr/bin/java -jar spring-petclinic-3.0.0.jar
 SuccessExitStatus=101
 TimeoutStopSec=10
 Restart=on-failure
